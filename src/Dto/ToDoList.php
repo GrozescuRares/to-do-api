@@ -12,6 +12,7 @@ class ToDoList
     #[Assert\Type(type: 'string')]
     public $name;
 
+    #[Assert\NotBlank]
     #[Assert\Count(min: 1)]
     #[Assert\All([
         new Assert\Type(type: 'string')
