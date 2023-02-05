@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Dto\ToDoList;
+use App\Dto\ToDoListUpdate;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ToDoListFileRepository
 {
@@ -47,5 +49,36 @@ class ToDoListFileRepository
 
             return $toDoList;
         }, $contents);
+    }
+
+    public function update(string $name, ToDoListUpdate $toDoListUpdate): void
+    {
+        $toUpdate = false;
+        $contents = json_decode(file_get_contents(self::FILE_PATH), true);
+
+        foreach ($contents as &$toDoListData) {
+            if ($toDoListData['name'] !== $name) {
+                continue;
+            }
+
+            if (!empty($toDoListUpdate->name)) {
+                $toDoListData['name'] = $toDoListUpdate->name;
+            }
+
+            if (!empty($toDoListUpdate->items)) {
+                $toDoListData['items'] = $toDoListUpdate->items;
+            }
+
+            $toUpdate = true;
+            break;
+        }
+
+        if (false === $toUpdate) {
+            throw new NotFoundHttpException();
+        }
+
+        $file = fopen(self::FILE_PATH, 'w');
+        fwrite($file, json_encode($contents));
+        fclose($file);
     }
 }

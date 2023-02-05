@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Dto\ToDoList;
+use App\Dto\ToDoListUpdate;
 use App\Repository\ToDoListFileRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\Json;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -55,5 +57,31 @@ class ToDoListController extends AbstractController
         $toDoLists = $fileRepository->getAll();
 
         return new JsonResponse($toDoLists);
+    }
+
+    #[Route(path: '/todo-list/{name}', methods: ['PATCH'])]
+    public function update(
+        string $name,
+        Request $request,
+        ValidatorInterface $validator,
+        ToDoListFileRepository $fileRepository,
+    ): Response {
+        $requestBody = json_decode($request->getContent(), true);
+        $toDoList = new ToDoListUpdate();
+        $toDoList->name = $requestBody['name'] ?? '';
+        $toDoList->items = $requestBody['items'] ?? [];
+
+        $violations = $validator->validate($toDoList);
+        if ($violations->count() > 0) {
+            return $this->json($violations, Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $fileRepository->update($name, $toDoList);
+        } catch (NotFoundHttpException) {
+            return new Response(status: Response::HTTP_NOT_FOUND);
+        }
+
+        return new Response();
     }
 }

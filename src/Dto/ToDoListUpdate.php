@@ -6,15 +6,11 @@ namespace App\Dto;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ToDoList
+class ToDoListUpdate
 {
-    #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
     public $name;
 
-    #[Assert\Count(min: 1)]
-    #[Assert\All([
-        new Assert\Type(type: 'string')
-    ])]
+    #[Assert\All([new Assert\Type(type: 'string')])]
     public $items;
 }
