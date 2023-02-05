@@ -14,19 +14,14 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\Json;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ToDoListController extends AbstractController
+class ToDoListController extends BaseController
 {
     #[Route(path: '/todo-list', methods: ['POST'])]
     public function create(
         Request $request,
         ToDoListFileRepository $fileRepository,
     ): Response {
-        $requestBody = json_decode($request->getContent(), true);
-        $toDoList = new ToDoList();
-        $toDoList->name = $requestBody['name'] ?? null;
-        $toDoList->items = $requestBody['items'] ?? [];
-
-
+        $toDoList = $this->convertRequestToDto($request, ToDoList::class);
         $fileRepository->save($toDoList);
 
         return new Response(null, Response::HTTP_CREATED);

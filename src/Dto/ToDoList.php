@@ -6,7 +6,7 @@ namespace App\Dto;
 
 class ToDoList
 {
-    public string $name;
+    public $name;
 
-    public array $items;
+    public $items;
 }
