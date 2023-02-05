@@ -8,18 +8,15 @@ use App\Dto\ToDoList;
 
 class ToDoListFileRepository
 {
-    private const FILE_PATH = '/var/www/app/var/to_do_list.txt';
-    private const LINE_SEPARATOR = "\n";
+    private const FILE_PATH = '/var/www/app/var/todo_lists.json';
 
     public function save(ToDoList $toDoList): void
     {
+        $contents = json_decode(file_get_contents(self::FILE_PATH), true);
+        $contents[] = $toDoList;
+
         $file = fopen(self::FILE_PATH, 'w');
-
-        fwrite($file, $toDoList->name . self::LINE_SEPARATOR);
-        foreach ($toDoList->items as $item) {
-            fwrite($file, $item . self::LINE_SEPARATOR);
-        }
-
+        fwrite($file, json_encode($contents));
         fclose($file);
     }
 }
