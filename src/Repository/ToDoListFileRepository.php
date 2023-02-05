@@ -22,33 +22,23 @@ class ToDoListFileRepository
         fclose($file);
     }
 
-    public function getByName(string $name): ?ToDoList
+    public function getByName(string $name): ToDoList
     {
         $contents = json_decode(file_get_contents(self::FILE_PATH), true);
         foreach ($contents as $toDoListData) {
             if ($toDoListData['name'] === $name) {
-                $toDoList = new ToDoList();
-                $toDoList->name = $toDoListData['name'];
-                $toDoList->items = $toDoListData['items'];
-
-                return $toDoList;
+                return $this->convertToDoListDataToDto($toDoListData);
             }
         }
 
-        return null;
+        throw new NotFoundHttpException();
     }
 
     public function getAll(): array
     {
         $contents = json_decode(file_get_contents(self::FILE_PATH), true);
 
-        return array_map(function (array $toDoListData) {
-            $toDoList = new ToDoList();
-            $toDoList->name = $toDoListData['name'];
-            $toDoList->items = $toDoListData['items'];
-
-            return $toDoList;
-        }, $contents);
+        return array_map(fn (array $toDoListData) => $this->convertToDoListDataToDto($toDoListData), $contents);
     }
 
     public function update(string $name, ToDoListUpdate $toDoListUpdate): void
@@ -80,5 +70,14 @@ class ToDoListFileRepository
         $file = fopen(self::FILE_PATH, 'w');
         fwrite($file, json_encode($contents));
         fclose($file);
+    }
+
+    private function convertToDoListDataToDto(array $toDoListData): ToDoList
+    {
+        $toDoList = new ToDoList();
+        $toDoList->name = $toDoListData['name'];
+        $toDoList->items = $toDoListData['items'];
+
+        return $toDoList;
     }
 }

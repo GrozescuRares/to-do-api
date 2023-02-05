@@ -34,13 +34,9 @@ class ToDoListController extends BaseController
     }
 
     #[Route(path: '/todo-list/{name}', methods: ['GET'])]
-    public function get(string $name, ToDoListFileRepository $fileRepository): Response
+    public function get(string $name, ToDoListFileRepository $fileRepository): JsonResponse
     {
         $toDoList = $fileRepository->getByName($name);
-
-        if (null === $toDoList) {
-            return new Response(status: Response::HTTP_NOT_FOUND);
-        }
 
         return new JsonResponse($toDoList);
     }
