@@ -20,12 +20,17 @@ class ToDoListController extends AbstractController
     public function create(
         Request $request,
         ToDoListFileRepository $fileRepository,
+        ValidatorInterface $validator,
     ): Response {
         $requestBody = json_decode($request->getContent(), true);
         $toDoList = new ToDoList();
-        $toDoList->name = $requestBody['name'] ?? null;
+        $toDoList->name = $requestBody['name'] ?? '';
         $toDoList->items = $requestBody['items'] ?? [];
 
+        $violations = $validator->validate($toDoList);
+        if ($violations->count() > 0) {
+            return $this->json($violations, Response::HTTP_BAD_REQUEST);
+        }
 
         $fileRepository->save($toDoList);
 
