@@ -13,3 +13,5 @@ Create a todo_lists.json file inside var folder. Go inside container and run:
 docker exec -ti to-do-api_api_1 bash
 chown -R www-data:www-data var/todo_lists.json
 ```
+
+If your IDE does not render the openapi documentation, please copy and paste the contents at https://editor.swagger.io/
