@@ -6,12 +6,10 @@ namespace App\Controller;
 
 use App\Dto\ToDoList;
 use App\Repository\ToDoListFileRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Json;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ToDoListController extends BaseController
@@ -35,13 +33,9 @@ class ToDoListController extends BaseController
     }
 
     #[Route(path: '/todo-list/{name}', methods: ['GET'])]
-    public function get(string $name, ToDoListFileRepository $fileRepository): Response
+    public function get(string $name, ToDoListFileRepository $fileRepository): JsonResponse
     {
         $toDoList = $fileRepository->getByName($name);
-
-        if (null === $toDoList) {
-            return new Response(status: Response::HTTP_NOT_FOUND);
-        }
 
         return new JsonResponse($toDoList);
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Dto\ToDoList;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ToDoListFileRepository
 {
@@ -20,32 +21,31 @@ class ToDoListFileRepository
         fclose($file);
     }
 
-    public function getByName(string $name): ?ToDoList
+    public function getByName(string $name): ToDoList
     {
         $contents = json_decode(file_get_contents(self::FILE_PATH), true);
         foreach ($contents as $toDoListData) {
             if ($toDoListData['name'] === $name) {
-                $toDoList = new ToDoList();
-                $toDoList->name = $toDoListData['name'];
-                $toDoList->items = $toDoListData['items'];
-
-                return $toDoList;
+                return $this->convertToDoListDataToDto($toDoListData);
             }
         }
 
-        return null;
+        throw new NotFoundHttpException();
     }
 
     public function getAll(): array
     {
         $contents = json_decode(file_get_contents(self::FILE_PATH), true);
 
-        return array_map(function (array $toDoListData) {
-            $toDoList = new ToDoList();
-            $toDoList->name = $toDoListData['name'];
-            $toDoList->items = $toDoListData['items'];
+        return array_map(fn (array $toDoListData) => $this->convertToDoListDataToDto($toDoListData), $contents);
+    }
 
-            return $toDoList;
-        }, $contents);
+    private function convertToDoListDataToDto(array $toDoListData): ToDoList
+    {
+        $toDoList = new ToDoList();
+        $toDoList->name = $toDoListData['name'];
+        $toDoList->items = $toDoListData['items'];
+
+        return $toDoList;
     }
 }
