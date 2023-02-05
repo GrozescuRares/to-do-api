@@ -10,11 +10,12 @@ class ToDoList
 {
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public string $name;
+    public $name;
 
+    #[Assert\NotBlank]
     #[Assert\Count(min: 1)]
     #[Assert\All([
         new Assert\Type(type: 'string')
     ])]
-    public array $items;
+    public $items;
 }

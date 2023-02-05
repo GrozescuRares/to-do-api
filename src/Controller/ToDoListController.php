@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\Json;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ToDoListController extends AbstractController
+class ToDoListController extends BaseController
 {
     #[Route(path: '/todo-list', methods: ['POST'])]
     public function create(
@@ -22,10 +22,7 @@ class ToDoListController extends AbstractController
         ToDoListFileRepository $fileRepository,
         ValidatorInterface $validator,
     ): Response {
-        $requestBody = json_decode($request->getContent(), true);
-        $toDoList = new ToDoList();
-        $toDoList->name = $requestBody['name'] ?? '';
-        $toDoList->items = $requestBody['items'] ?? [];
+        $toDoList = $this->convertRequestToDto($request, ToDoList::class);
 
         $violations = $validator->validate($toDoList);
         if ($violations->count() > 0) {
