@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  title: To-Do List API
+  version: 1.0.0
+paths:
+  /todo-list:
+    post:
+      summary: Creates a new ToDo List
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                items:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        201:
+          description: To-Do List created successfully
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  violations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        propertyPath:
+                          type: string
+                        message:
+                          type: string
+    get:
+      summary: Get all ToDo Lists
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    items:
+                      type: array
+                      items:
+                        type: string
+  /todo-list/{name}:
+    get:
+      summary: Get ToDo List by name
+      parameters:
+        - in: path
+          name: name
+          schema:
+            type: string
+          required: true
+          description: Name of the ToDo List
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  items:
+                    type: array
+                    items:
+                      type: string
+        404:
+          description: ToDo List not found
+    patch:
+      summary: Update a ToDo List
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: The name of the ToDo List to be updated
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                items:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        200:
+          description: Successful response
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+        404:
+          description: ToDo List not found
