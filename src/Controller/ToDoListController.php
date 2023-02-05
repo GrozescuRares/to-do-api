@@ -34,6 +34,26 @@ class ToDoListController extends AbstractController
 
         $fileRepository->save($toDoList);
 
-        return new Response(null, Response::HTTP_CREATED);
+        return new Response(status: Response::HTTP_CREATED);
+    }
+
+    #[Route(path: '/todo-list/{name}', methods: ['GET'])]
+    public function get(string $name, ToDoListFileRepository $fileRepository): Response
+    {
+        $toDoList = $fileRepository->getByName($name);
+
+        if (null === $toDoList) {
+            return new Response(status: Response::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse($toDoList);
+    }
+
+    #[Route(path: '/todo-list', methods: ['GET'])]
+    public function getAll(ToDoListFileRepository $fileRepository): JsonResponse
+    {
+        $toDoLists = $fileRepository->getAll();
+
+        return new JsonResponse($toDoLists);
     }
 }
