@@ -1,0 +1,54 @@
+openapi: 3.0.0
+info:
+  title: To-Do List API
+  version: 1.0.0
+paths:
+  /todo-list:
+    post:
+      summary: Creates/Updates a ToDo List
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        200:
+          description: To-Do List created/updated successfully
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  violations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        propertyPath:
+                          type: string
+                        message:
+                          type: string
+    get:
+      summary: Get ToDo List
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        type: string
