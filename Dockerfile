@@ -12,5 +12,3 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 COPY . .
 
 EXPOSE 9000
-
-RUN composer install
